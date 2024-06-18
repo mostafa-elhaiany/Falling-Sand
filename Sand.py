@@ -2,21 +2,28 @@ import random
 import utils, config
 
 class Sand:
+    """
+    Sand class to keep track of every individual sand grain
+    checking for dropped sand should be more optimized than checking the entire array every iteration
+    """
     def __init__(self, x, y, a=1): 
-        self.x = x
-        self.y = y
-        self.v = 0
-        self.t = 1
-        self. a = a
+        self.x = x # column
+        self.y = y # row
+        self.v = 0 # velocity 
+        self.t = 1 # time step
+        self. a = a # acceleration
 
-    def print(self):
+    def print(self): # to string function 
         print("x:",self.x,"y:",self.y)
 
     def update(self, grid):
+        """
+        Update every individual sand grain with its individual velocity 
+        """
         self.v += self.a * self.t
         final_y = int(self.y + self.v * self.t)
         new_y = self.y+1
-        while new_y<=final_y:
+        while new_y<=final_y: # checks if it should stop before the final destination
             if(utils.within_bounds(self.x,new_y)):
                 below = grid[new_y][self.x]
                 if(below == config.BLACK):

@@ -19,11 +19,19 @@ sand_grid = utils.make_grid(config.BLACK, config.GRID_DIMS[0], config.GRID_DIMS[
 sand = []
 
 def draw_grid(screen, cell_size):
+    """
+    For each sand grain in the array draws a rectangle with its specified color in the grid
+    """
     for s in sand:
         rect = pygame.Rect(s.x * cell_size[0], s.y * cell_size[1], cell_size[0], cell_size[1])
         pygame.draw.rect(screen, sand_grid[s.y][s.x], rect)
 
 def create_sand_around_point(x, y):
+    """
+    A way to introduce dropping more sand on the screen, every click there is a percentage of sand cloud to be created around the mouse pointer
+    Args:
+        x,y mouse positions
+    """
     global sand
     center_col = x // config.CELL_SIZE[0]
     center_row = y // config.CELL_SIZE[1]
@@ -33,13 +41,19 @@ def create_sand_around_point(x, y):
             for c_dif in range(-config.CLICK_RANGE, config.CLICK_RANGE, 1):
                 col = center_col+c_dif
                 if 0 <= row < config.GRID_DIMS[0] and 0 <= col < config.GRID_DIMS[1] and random.random()>0.5:
-                    sand.append(Sand(col, row))
+                    acceleration = config.ACCELERATION + random.randint(-config.ACCELERATION_RANDOMNESS, config.ACCELERATION_RANDOMNESS)
+                    if(acceleration<1):
+                        acceleration = 1
+                    sand.append(Sand(col, row, acceleration))
                     sand_grid[row][col] = utils.add_sand_color()
     else:
         sand.append(Sand(center_col, center_row))
         sand_grid[center_row][center_col] = utils.add_sand_color()
 
 def handle_event(event):
+    """
+    handling clicks and drags
+    """
     global mouse_dragging
     if event.type == pygame.MOUSEBUTTONDOWN:
         mouse_dragging = True
@@ -53,6 +67,9 @@ def handle_event(event):
 
 
 def main():
+    """
+    Main "game" loop
+    """
     global sand_grid
     clock = pygame.time.Clock()
 
