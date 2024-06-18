@@ -1,7 +1,7 @@
 # Constants
-CELL_SIZE = (5, 5)  # Width and height of each cell
-GRID_DIMS = (100, 70)  # Number of rows and columns
-CLICK_RANGE = 0
+CELL_SIZE = (2, 2)  # Width and height of each cell
+GRID_DIMS = (200, 150)  # Number of rows and columns
+CLICK_RANGE = 5
 
 # Calculate screen dimensions
 SCREEN_WIDTH = CELL_SIZE[0] * GRID_DIMS[1]

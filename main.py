@@ -3,6 +3,7 @@ import sys
 import random
 import config
 import utils
+from Sand import Sand
 
 # Initialize Pygame
 pygame.init()
@@ -15,16 +16,15 @@ mouse_dragging = False
 
 # Initialize grid state
 sand_grid = utils.make_grid(config.BLACK, config.GRID_DIMS[0], config.GRID_DIMS[1])
+sand = []
 
-def draw_grid(screen, cell_size, grid_dims):
-    for row in range(grid_dims[0]):
-        for col in range(grid_dims[1]):
-            rect = pygame.Rect(col * cell_size[0], row * cell_size[1], cell_size[0], cell_size[1])
-            pygame.draw.rect(screen, sand_grid[row][col], rect)
-
-
+def draw_grid(screen, cell_size):
+    for s in sand:
+        rect = pygame.Rect(s.x * cell_size[0], s.y * cell_size[1], cell_size[0], cell_size[1])
+        pygame.draw.rect(screen, sand_grid[s.y][s.x], rect)
 
 def create_sand_around_point(x, y):
+    global sand
     center_col = x // config.CELL_SIZE[0]
     center_row = y // config.CELL_SIZE[1]
     if(config.CLICK_RANGE>0):
@@ -33,8 +33,10 @@ def create_sand_around_point(x, y):
             for c_dif in range(-config.CLICK_RANGE, config.CLICK_RANGE, 1):
                 col = center_col+c_dif
                 if 0 <= row < config.GRID_DIMS[0] and 0 <= col < config.GRID_DIMS[1] and random.random()>0.5:
+                    sand.append(Sand(col, row))
                     sand_grid[row][col] = utils.add_sand_color()
     else:
+        sand.append(Sand(center_col, center_row))
         sand_grid[center_row][center_col] = utils.add_sand_color()
 
 def handle_event(event):
@@ -64,14 +66,16 @@ def main():
 
         # Fill screen with black
         screen.fill(config.BLACK)
-        
-        # Draw grid
-        draw_grid(screen, config.CELL_SIZE, config.GRID_DIMS)
-        
+
+        # draw grid        
+        draw_grid(screen, config.CELL_SIZE)
+
         # Update display
         pygame.display.flip()
-        
-        sand_grid = utils.update_grid(sand_grid)
+    
+        # update particles
+        sand_grid = utils.update_sand(sand, sand_grid)
+
         # Cap the frame rate
         clock.tick(60)
 
